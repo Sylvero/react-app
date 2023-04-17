@@ -66,7 +66,7 @@ class ImageComponent extends React.Component<{}, { images: Image[] }> {
     async getImages(amount: number) {
         const timer = new Timer('getImage',amount); // create a new Timer object
         const imagePromises = [];
-        for (let i = 1; i <= amount; i++) {
+        for (let i = 50; i <= amount+50; i++) {
             imagePromises.push(ImageService.getImages(i));
         }
         const responses = await Promise.all(imagePromises);
