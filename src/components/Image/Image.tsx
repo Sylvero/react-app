@@ -47,11 +47,11 @@ class ImageComponent extends React.Component<{}, { images: Image[] }> {
     render() {
         const { images } = this.state;
         return (
-            <><h1 className="text-center"> Users List</h1><br/>
+            <>
                 <div className={"buttons"}>
-                    <Button variant="primary" onClick={() => this.getImages(10)}>get 10 images</Button>
-                    <Button variant="primary" onClick={() => this.getImages(20)}>get 20 images</Button>
-                    <Button variant="primary" onClick={() => this.getImages(50)}>get 50 images</Button>
+                    <Button variant="primary" onClick={() => this.getImages(50)}>Pobierz 50 zdjęć</Button>
+                    <Button variant="primary" onClick={() => this.getImages(100)}>Pobierz 100 zdjęć</Button>
+                    <Button variant="primary" onClick={() => this.getImages(200)}>Pobierz 200 zdjęć</Button>
                 </div>
                 <div className={"images"}>
                     {images.map((image) => (
@@ -66,7 +66,7 @@ class ImageComponent extends React.Component<{}, { images: Image[] }> {
     async getImages(amount: number) {
         const timer = new Timer('getImage',amount); // create a new Timer object
         const imagePromises = [];
-        for (let i = 50; i <= amount+50; i++) {
+        for (let i = 251; i <= amount+251; i++) {
             imagePromises.push(ImageService.getImages(i));
         }
         const responses = await Promise.all(imagePromises);

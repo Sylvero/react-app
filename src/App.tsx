@@ -52,8 +52,8 @@ function App() {
 
     return (
         <div className={"container"}>
-            <Image />
             <User/>
+            <Image />
         </div>
     );
 }

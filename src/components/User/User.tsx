@@ -28,12 +28,14 @@ class Timer {
 }
 
 class UserComponent extends React.Component<{}, { users: User[] }> {
+    private id: number | void | undefined;
 
     constructor(props: any) {
         super(props)
         this.state = {
             users: []
         }
+        this.getLastId()
     }
     sleep = (ms:number) => new Promise(r => setTimeout(r, ms));
 
@@ -48,23 +50,20 @@ class UserComponent extends React.Component<{}, { users: User[] }> {
         return (
             <>
                 <div>
-                    <h1 className="text-center"> Users List</h1><br/>
+                    <h1 className="text-center"> Aplikacja testowa React</h1><br/>
                     <div className={"buttons"}>
-                        <Button variant="primary" onClick={() => this.getUser(1000)}>get 1000 Users</Button>
-                        <Button variant="primary" onClick={() => this.getUser(2000)}>get 2000 Users</Button>
-                        <Button variant="primary" onClick={() => this.getUser(5000)}>get 5000 Users</Button>
+                        <Button variant="primary" onClick={() => this.getUser(1000)}>Pobierz 1 000 wierszy</Button>
+                        <Button variant="primary" onClick={() => this.getUser(5000)}>Pobierz 5 000 wierszy</Button>
+                        <Button variant="primary" onClick={() => this.getUser(10000)}>Pobierz 10 000 wierszy</Button>
                     </div>
-                <table className="table table-striped">
-                    <thead>
-                    <tr>
+                    <div className={"buttons"}>
+                        <Button variant="primary" onClick={() => this.deleteUser(100)}>Usuń 100 rekordów</Button>
+                        <Button variant="primary" onClick={() => this.deleteUser(500)}>Usuń 500 rekordów</Button>
+                        <Button variant="primary" onClick={() => this.deleteUser(1000)}>Usuń 1 000 rekordów</Button>
+                        <Button variant="primary" onClick={() => this.generateData()}>Generuj Rekordy</Button>
+                    </div>
+                <table className="table">
 
-                        <td> Id</td>
-                        <td> First Name</td>
-                        <td> Last Name</td>
-
-                    </tr>
-
-                    </thead>
                     <tbody>
                     {this.state.users.map(
                         (user, index) => (
@@ -82,17 +81,40 @@ class UserComponent extends React.Component<{}, { users: User[] }> {
         )
     }
 
+    getLastId() {
+        UserService.getFirstId().then(value => this.id = value)
+    }
+
     async getUser(amount: number) {
-        const timer = new Timer('getUser',amount); // create a new Timer object
+        const timer = new Timer('getUser',amount);
         const userPromises = [];
-        for (let i = 1; i <= amount; i++) {
+        for (let i = this.id!; i <= amount+this.id!; i++) {
             userPromises.push(UserService.getUsers(i));
             await this.sleep(5);
         }
         const responses = await Promise.all(userPromises);
         const users = responses.map((response) => response.data);
         this.setState({ users });
+        timer.stop();
+    }
+
+    async deleteUser(amount: number) {
+        const timer = new Timer('deleteUser', amount);
+        const userPromises = [];
+        let users= this.state.users
+        for (let i = this.id!; i <= amount + this.id!; i++) {
+            userPromises.push(UserService.deleteUser(i));
+            await this.sleep(5);
+            users.shift()
+        }
+        const responses = await Promise.all(userPromises);
+        this.setState({users})
+
         timer.stop(); // call the stop method to log the elapsed time
+    }
+
+    private generateData() {
+        UserService.generateData();
     }
 }
 

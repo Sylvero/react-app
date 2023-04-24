@@ -1,4 +1,7 @@
 .buttons {
     display: flex;
     gap: 50px;
+    margin: 0 auto 50px auto;
+    justify-content: center;
+    align-items: center;
 }
