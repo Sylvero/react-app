@@ -29,6 +29,7 @@ class Timer {
 
 class UserComponent extends React.Component<{}, { users: User[] }> {
     private id: number | void | undefined;
+    usersList: any [] = []
 
     constructor(props: any) {
         super(props)
@@ -88,14 +89,16 @@ class UserComponent extends React.Component<{}, { users: User[] }> {
     async getUser(amount: number) {
         const timer = new Timer('getUser',amount);
         const userPromises = [];
+        const users: any [] = [];
         for (let i = this.id!; i <= amount+this.id!; i++) {
-            userPromises.push(UserService.getUsers(i));
+            userPromises.push(UserService.getUsers(i).then(user => users.push(user.data)));
             await this.sleep(5);
+            this.setState({ users });
         }
-        const responses = await Promise.all(userPromises);
-        const users = responses.map((response) => response.data);
-        this.setState({ users });
-        timer.stop();
+        const responses = await Promise.all(userPromises).finally(() => timer.stop());
+        // // const users = responses.map((response) => response.data);
+        // this.setState({ users });
+
     }
 
     async deleteUser(amount: number) {
